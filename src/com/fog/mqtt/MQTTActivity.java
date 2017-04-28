@@ -6,13 +6,18 @@ import io.fogcloud.fog_mqtt.helper.ListenDeviceParams;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MQTTActivity extends Activity {
 	private String TAG = "---mqtt---";
+	private final int _EL_S = 1;
+	private final int _EL_F = 2;
+	
 	private Context context;
 
 	private TextView startpub;
@@ -24,7 +29,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		context = MainActivity.this;
+		context = MQTTActivity.this;
 
 		initView();
 		initOnClick();
@@ -63,16 +68,19 @@ public class MainActivity extends Activity {
 			@Override
 			public void onSuccess(int code, String message) {
 				Log.d(TAG, message);
+				send2handler(_EL_S, message);
 			}
 
 			@Override
 			public void onFailure(int code, String message) {
 				Log.d(TAG, code + " - " + message);
+				send2handler(_EL_F, message);
 			}
 
 			@Override
 			public void onDeviceStatusReceived(int code, String messages) {
 				Log.d(TAG + code, messages);
+				send2handler(_EL_S, messages);
 			}
 		});
 	}
@@ -85,12 +93,44 @@ public class MainActivity extends Activity {
             @Override
             public void onSuccess(int code, String message) {
                 Log.d(TAG, code + " " + message);
+                send2handler(_EL_S, message);
             }
 
             @Override
             public void onFailure(int code, String message) {
                 Log.d(TAG, code + " " + message);
+                send2handler(_EL_F, message);
             }
         });
 	}
+	
+	/**
+	 * 发送消息给handler
+	 * 
+	 * @param tag
+	 * @param message
+	 */
+	private void send2handler(int tag, String message) {
+		Message msg = new Message();
+		msg.what = tag;
+		msg.obj = message;
+		elhandler.sendMessage(msg);
+	}
+	
+	/**
+	 * 监听配网时候调用接口的log，并显示在activity上
+	 */
+	Handler elhandler = new Handler() {
+
+		public void handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+			case _EL_S:
+				logsid.append("\n" + msg.obj.toString());
+				break;
+			case _EL_F:
+				logsid.append("\n" + msg.obj.toString());
+				break;
+			}
+		};
+	};
 }

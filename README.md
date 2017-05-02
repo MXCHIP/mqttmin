@@ -16,9 +16,11 @@ Android - 简单的MQTTdemo by eclipse
 ##### 测试流程
 
 MQTT数据收发需要三个部分：
-1、app
-2、云
-3、设备
+> 1、app
+
+> 2、云
+
+> 3、设备
 
 云的部分我们不用管，我们只需要管设备和APP部分，找到一个测试专用的服务器，APP我们自己开发，然后接下来只需要找到一个设备了，我们可以通过这个网页模拟一个设备：[传送门](http://api.easylink.io/tools/mqtt/)，
 
@@ -26,10 +28,15 @@ MQTT数据收发需要三个部分：
 1、Connection中填入几个参数，其他默认，点击Connect按钮，
 
 > host:api.easylink.io
+
 > port:1983
+
 > ClientID:clientId-osjRjMOd74
+
 > username:xuyx@mxchip.com
+
 > username:123456
+
 > Keep Alive:60
 
 2、Subscriptions中点击“Add New Topic Subscription”,在弹出框的Topic中填入以下参数，其他默认，点击Subscribe按钮
